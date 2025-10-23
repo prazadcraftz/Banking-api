@@ -5,19 +5,15 @@ const bodyParser = require('body-parser');
 const app = express();
 app.use(bodyParser.json());
 
-// Secret key for signing JWT (in real projects, store in .env)
 const SECRET_KEY = 'supersecretkey123';
 
-// Hardcoded user (for demo)
 const USER = { username: 'admin', password: '1234' };
 
-// Simulated user account
 let account = {
-  name: 'John Doe',
+  name: 'Bunny',
   balance: 1000,
 };
 
-// --- Middleware to verify JWT ---
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Extract Bearer token
@@ -30,12 +26,11 @@ function authenticateToken(req, res, next) {
     if (err) {
       return res.status(403).json({ error: 'Invalid or expired token' });
     }
-    req.user = user; // attach decoded user info to request
+    req.user = user; 
     next();
   });
 }
 
-// --- Login Route ---
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
 
@@ -47,7 +42,6 @@ app.post('/login', (req, res) => {
   }
 });
 
-// --- Protected Banking Routes ---
 
 // 1. View Balance
 app.get('/balance', authenticateToken, (req, res) => {
@@ -82,6 +76,6 @@ app.post('/withdraw', authenticateToken, (req, res) => {
   res.json({ message: `Withdrew ₹${amount}`, newBalance: account.balance });
 });
 
-// --- Start Server ---
 const PORT = 3000;
 app.listen(PORT, () => console.log(`🚀 Banking API running on http://localhost:${PORT}`));
+
